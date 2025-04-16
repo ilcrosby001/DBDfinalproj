@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    h1= role 
+    form(action='/', method='post')
+        //- Hidden control ensures that role propagates back every time the form is submitted
+        input(type='hidden', name='role', value='registrar')
+        p Your ID: #{formdata.ident}
+
+    input(type='submit')

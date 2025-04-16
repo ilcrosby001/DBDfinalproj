@@ -2,7 +2,7 @@ extends layout
 
 block content
   h1= title
-  form(action="/", method='get')
+  form(action="/", method='post')
     p Enter ID and Role
     div(class="enter-id" required)
           - var q_name = 'ident'
