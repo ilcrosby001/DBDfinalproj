@@ -69,8 +69,10 @@ function renderStudent(req, res, next, pagetitle){
           req.app.locals.courses = rows;
 
           let query2 = 'select CourseNo, FacFirstName, FacLastName, OffLocation, OffTime, OffDays';
-          query2 += ' from (Offering left outer join Faculty on Faculty.FacSSN = Offering.FacSSN)'
-          query2 += ` where OffTerm = 'WINTER' and OffYear = 2025;`
+          query2 += ' from (Offering left outer join Faculty on Faculty.FacSSN = Offering.FacSSN) inner join Enrollment on Enrollment.OfferNo = Offering.OfferNo'
+          query2 += ` where OffTerm = 'WINTER' and OffYear = 2025`
+          query2 += ` and Enrollment.OfferNo not in (select OfferNo from Enrollment where StdSSN = '${req.app.locals.formdata.ident}')`
+          query2 += ' group by Enrollment.OfferNo;'
           req.app.locals.query2 = query2;
           req.app.locals.db.all(query2, [], 
             (err, rows) => {
