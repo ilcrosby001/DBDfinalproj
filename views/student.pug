@@ -10,7 +10,7 @@ block content
         if !courses || courses.length == 0
             p Student #{formdata.ident} enrolled in no courses 
         else if courses.length > 0
-            p Student enrolled in the following classes
+            p Student enrolled in the following classes:
             table
                 thead
                     tr
@@ -24,7 +24,7 @@ block content
         if !nextterm || nextterm.length == 0
             p There are no courses for the next term 
         else if nextterm.length > 0
-            p The next term offers the following classes:
+            p Student can enroll in the following classes next term:
             table
                 thead
                     tr
