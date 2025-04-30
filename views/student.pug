@@ -17,11 +17,16 @@ block content
                     tr
                         each key in Object.keys(courses[0])
                             th= key
+                        th Drop
                 tbody 
                     each course in courses
                         tr 
                             each val in Object.values(course)
                                 td= val
+                            if course['OffTerm'] == 'WINTER'
+                                if course['OffYear'] == 2025
+                                    td
+                                        input(type='radio', name='Drop', value=`${course['OfferNo']}`)
         if !nextterm || nextterm.length == 0
             p There are no courses for the next term 
         else if nextterm.length > 0
@@ -31,10 +36,13 @@ block content
                     tr
                         each key in Object.keys(nextterm[0])
                             th= key
+                        th Enroll
                 tbody 
                     each course in nextterm
                         tr
                             each val in Object.values(course) 
                                 td= val
+                            td
+                                input(type='radio', name='enrollIn', value=`${course['OfferNo']}`)
         
         input(type='submit')
