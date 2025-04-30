@@ -56,7 +56,7 @@ function renderFaculty(req, res, next, pagetitle) {
 
 function renderStudent(req, res, next, pagetitle){
   let query = 'select CourseNo, OffTerm, OffYear, FacFirstName, FacLastName, EnrGrade';
-  query += ' from (Enrollment inner join Offering on Enrollment.OfferNo = Offering.OfferNo) inner join Faculty on Faculty.FacSSN = Offering.FacSSN';
+  query += ' from (Enrollment natural join Offering) left join Faculty on Faculty.FacSSN = Offering.FacSSN';
   query += ` where StdSSN = '${req.app.locals.formdata.ident}';`;
   console.log('Query: ' + query);
   req.app.locals.query = query;

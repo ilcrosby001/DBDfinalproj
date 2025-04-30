@@ -5,6 +5,7 @@ block content
     form(action='/', method='post')
         //- Hidden control ensures that role propagates back every time the form is submitted
         input(type='hidden', name='role', value='faculty')
+        input(type='hidden', name='ident', value=`${formdata.ident}`)
         p Your ID: #{formdata.ident}
         //- p Query: #{query}
         if !courses || courses.length == 0
