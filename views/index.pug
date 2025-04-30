@@ -15,9 +15,9 @@ block content
           label(for=q_name) Are you student, faculty, or registrar?
           select(name=q_name, id=q_name, required)
             option(value='') &mdash;Please choose a role&mdash;
-            option(id='student') Student
-            option(id='faculty') Faculty
-            option(id='registrar') Registrar
+            option(value='student') Student
+            option(value='faculty') Faculty
+            option(value='registrar') Registrar
           span(class='flag')
     input(type='submit', value='Submit')
     input(type='reset', value='Reset')

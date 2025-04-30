@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    h1= role 
+    h1= role
     form(action='/', method='post')
         //- Hidden control ensures that role propagates back every time the form is submitted
         input(type='hidden', name='role', value='faculty')
@@ -16,10 +16,35 @@ block content
                     tr
                         each key in Object.keys(courses[0])
                             th= key
+                        th Grade course
                 tbody 
                     each course in courses
                         tr 
                             each val in Object.values(course)
                                 td= val
+                            td
+                                input(type='radio', name='gradingCourse', value=`${course['OfferNo']}`)
 
         input(type='submit')
+    
+    if gradingCourse
+        form(action='/', method='post')
+            input(type='hidden', name='role', value='faculty')
+            input(type='hidden', name='ident', value=`${formdata.ident}`)
+            input(type="hidden", name='gradingCourse', value=`${gradingCourse}`)
+
+            if !students || students.length == 0
+                p No students in course
+            else if students.length > 0
+                table
+                    thead 
+                        tr
+                            each key in Object.keys(students[0])
+                                th= key
+                    tbody 
+                        each student in students
+                            tr 
+                                each val in Object.values(student)
+                                    td= val
+                                td
+                                    input(type="number",name=`newGrade_${student['StdSSN']}`)
