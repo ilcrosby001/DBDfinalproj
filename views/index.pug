@@ -4,20 +4,20 @@ block content
   h1= title
   form(action="/", method='post')
     p Enter ID and Role
-    div(class="enter-id" required)
+    div(class="enter-id", required)
           - var q_name = 'ident'
           label(for=q_name) Your ID:
           input(type="text", id=q_name, name=q_name, required)
           span(class='flag')
   
-    div(class='riposte' required)
+    div(class='riposte', required)
           - q_name = 'role'
           label(for=q_name) Are you student, faculty, or registrar?
           select(name=q_name, id=q_name, required)
             option(value='') &mdash;Please choose a role&mdash;
-            option(value='student') Student
-            option(value='faculty') Faculty
-            option(value='registrar') Registrar
+            option Student
+            option Faculty
+            option Registrar
           span(class='flag')
     input(type='submit', value='Submit')
     input(type='reset', value='Reset')

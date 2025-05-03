@@ -4,7 +4,7 @@ block content
     h1= role
     form(action='/', method='post')
         //- Hidden control ensures that role propagates back every time the form is submitted
-        input(type='hidden', name='role', value='faculty')
+        input(type='hidden', name='role', value=`${role}`)
         input(type='hidden', name='ident', value=`${formdata.ident}`)
         p Your ID: #{formdata.ident}
         //- p Query: #{query}
@@ -23,29 +23,46 @@ block content
                             each val in Object.values(course)
                                 td= val
                             td
-                                input(type='radio', name='gradingCourse', value=`${course['OfferNo']}`)
+                                if gradingCourse && (gradingCourse == course['OfferNo'])
+                                    input(type='radio', name='gradingCourse', value=`${course['OfferNo']}`, checked)
+                                else
+                                    input(type='radio', name='gradingCourse', value=`${course['OfferNo']}`)
 
         input(type='submit')
     
     if gradingCourse
-        form(action='/', method='post')
-            input(type='hidden', name='role', value='faculty')
-            input(type='hidden', name='ident', value=`${formdata.ident}`)
-            input(type="hidden", name='gradingCourse', value=`${gradingCourse}`)
+        //- form(action='/', method='post')
 
-            if !students || students.length == 0
-                p No students in course
-            else if students.length > 0
-                table
-                    thead 
-                        tr
-                            each key in Object.keys(students[0])
+        if !students || students.length == 0
+            p No students in course
+        else if students.length > 0
+            script function gradeEdit(elt) { elt.style.backgroundColor = "pink"; }
+            table
+                thead 
+                    tr
+                        each key in Object.keys(students[0])
+                            if key != 'EnrGrade'
                                 th= key
-                    tbody 
-                        each student in students
-                            tr 
-                                each val in Object.values(student)
-                                    td= val
-                                td
-                                    input(type="number",name=`newGrade_${student['StdSSN']}`)
-            input(type='submit')
+                        th Grade
+                tbody 
+                    each student in students
+                        tr
+                            each key in Object.keys(student)
+                                if key != 'EnrGrade'
+                                    td= student[key]
+                            td
+                                form(action="/", method="post") 
+                                    input(type='hidden', name='role', value=`${role}`)
+                                    input(type='hidden', name='ident', value=`${formdata.ident}`)
+                                    input(type="hidden", name='gradingCourse', value=`${gradingCourse}`)
+                                    input(type='hidden', name='StdSSN', value=`${student['StdSSN']}`)
+                                    input(type="number", name="newGrade", class="grade",
+                                            value=`${student['EnrGrade']}`, 
+                                            step='0.1', min='0', max='4.0'
+                                            onchange='gradeEdit(this);')
+                                    input(type='submit',value="Update")
+                                //- each val in Object.values(student)
+                                //-     td= val
+                                //- td
+                                //-     input(type="number",name=`newGrade_${student['StdSSN']}`)
+            //- input(type='submit')

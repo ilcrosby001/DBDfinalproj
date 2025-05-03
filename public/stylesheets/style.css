@@ -6,3 +6,8 @@ body {
 a {
   color: #00B7FF;
 }
+
+/* Added stuff */
+input.grade {
+  width: 3em;
+}
