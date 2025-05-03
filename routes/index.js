@@ -27,13 +27,13 @@ function renderIndex(req, res, next) {
     if (!req.app.locals.formdata.role) {
         res.render('index', {title: pagetitle});
     }
-    else if (req.app.locals.formdata.role === 'Faculty') {
+    else if (req.app.locals.formdata.role.toLocaleLowerCase() === 'faculty') {
         renderFaculty(req, res, next, pagetitle + ': Faculty');
     }
-    else if (req.app.locals.formdata.role === 'Student') {
+    else if (req.app.locals.formdata.role.toLocaleLowerCase() === 'student') {
         renderStudent(req, res, next, pagetitle + ': Student');
     }
-    else if (req.app.locals.formdata.role === 'Registrar') {
+    else if (req.app.locals.formdata.role.toLocaleLowerCase() === 'registrar') {
         renderRegistrar(req, res, next, pagetitle + ': Registrar');
     }
     else {
