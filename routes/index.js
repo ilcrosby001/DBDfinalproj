@@ -148,6 +148,7 @@ function renderStudent(req, res, next, pagetitle){
                 }
                 req.app.locals.nextterm = rows;
 
+                console.log('Form data: ' + JSON.stringify(req.app.locals.formdata));
                 res.render(req.app.locals.formdata.role, 
                   {role: capitalizeString(req.app.locals.formdata.role),
                   courses: req.app.locals.courses,
@@ -204,6 +205,7 @@ function renderRegistrar(req, res, next, pagetitle){
 }
 
 function actuallyRenderRegistrar(req, res, next, role, courses, cancelOffer=undefined, offers=undefined) {
+  console.log('Form data: ' + JSON.stringify(req.app.locals.formdata));
   res.render('registrar', {role: role,
                         courses: courses,
                         cancelOffer: cancelOffer,
