@@ -125,6 +125,7 @@ function renderStudent(req, res, next, pagetitle){
   let query = 'select CourseNo, OffTerm, OffYear, FacFirstName, FacLastName, EnrGrade';
   query += ' from (Enrollment natural join Offering) left join Faculty on Faculty.FacSSN = Offering.FacSSN';
   query += ` where StdSSN = '${req.app.locals.formdata.ident}';`;
+  query += ' order by OffTerm and OffYear;'
   console.log('Query: ' + query);
   req.app.locals.query = query;
   console.log('r.a.l.q:' + req.app.locals.query);
@@ -136,10 +137,11 @@ function renderStudent(req, res, next, pagetitle){
           req.app.locals.courses = rows;
 
           let query2 = 'select CourseNo, FacFirstName, FacLastName, OffLocation, OffTime, OffDays';
-          query2 += ' from (Offering left outer join Faculty on Faculty.FacSSN = Offering.FacSSN) inner join Enrollment on Enrollment.OfferNo = Offering.OfferNo'
-          query2 += ` where OffTerm = 'WINTER' and OffYear = 2025`
-          query2 += ` and Enrollment.OfferNo not in (select OfferNo from Enrollment where StdSSN = '${req.app.locals.formdata.ident}')`
-          query2 += ' group by Enrollment.OfferNo;'
+          query2 += ' from (Offering left outer join Faculty on Faculty.FacSSN = Offering.FacSSN) inner join Enrollment on Enrollment.OfferNo = Offering.OfferNo';
+          query2 += ` where OffTerm = 'WINTER' and OffYear = 2025`;
+          query2 += ` and Enrollment.OfferNo not in (select OfferNo from Enrollment where StdSSN = '${req.app.locals.formdata.ident}')`;
+          query2 += ' group by Enrollment.OfferNo';
+          query2 += ' order by CourseNo;';
           req.app.locals.query2 = query2;
           req.app.locals.db.all(query2, [], 
             (err, rows) => {
@@ -163,6 +165,7 @@ function renderRegistrar(req, res, next, pagetitle){
   let query = 'select OfferNo, CourseNo, Faculty.FacSSN, FacLastName, OffLocation, OffTime, OffDays';
   query += ' from Offering left join Faculty on Faculty.FacSSN = Offering.FacSSN';
   query += ` where OffTerm = 'WINTER' and OffYear = 2025`;
+  query += ' order by OffTerm and OffYear;';
   console.log('Query: ' + query);
   req.app.locals.query = query;
   console.log('r.a.l.q:' + req.app.locals.query);
@@ -181,7 +184,7 @@ function renderRegistrar(req, res, next, pagetitle){
               console.log('Query2 ' + query2);
               req.app.locals.query2 = query2;
               req.app.locals.db.all(query2, [],
-                  (err, students) => {
+                  (err, offers) => {
                       if (err) {
                           throw err;
                       }
