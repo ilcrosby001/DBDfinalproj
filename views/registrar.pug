@@ -29,8 +29,9 @@ block content
                                 input(type='radio', name='cancelOffer', value=`${course['OfferNo']}`)
 
         input(type='submit')
-    //- if editOffer
-    //-     form(action='/', method='post')
-    //-         input(type='hidden', name='role', value='faculty')
-    //-         input(type='hidden', name='ident', value=`${formdata.ident}`)
-    //-         input(type="hidden", name='editOffer', value=`${editOffer}`)
+    if cancelOffer
+        form(action='/', method='post')
+            input(type='hidden', name='role', value='registrar')
+            input(type='hidden', name='ident', value=`${formdata.ident}`)
+            input(type="hidden", name='cancelOffer', value=`${cancelOffer}`)
+            p Cancel offering: #{cancelOffer}
