@@ -222,34 +222,9 @@ function renderRegistrar(req, res, next, pagetitle){
           }
           req.app.locals.courses = rows;
 
-          console.log('Canceling Offering: "' + req.app.locals.formdata.cancelOffer + '"')
-          if (req.app.locals.formdata.cancelOffer) {
-              let query2 = 'select OfferNo, CourseNo, Faculty.FacSSN, FacLastName, OffLocation, OffTime, OffDays';
-              query2 += ' from Offering left join Faculty on Faculty.FacSSN = Offering.FacSSN';
-              query2 += ` where OfferNo = '${req.app.locals.formdata.cancelOffer}';`
-              console.log('Query2 ' + query2);
-              req.app.locals.query2 = query2;
-              req.app.locals.db.all(query2, [],
-                  (err, offers) => {
-                      if (err) {
-                          throw err;
-                      }
-                      req.app.locals.offers = offers;
-                      actuallyRenderRegistrar(req, res, next, 
-                          capitalizeString(req.app.locals.formdata.role), req.app.locals.courses,
-                          req.app.locals.formdata.cancelOffer, offers);
-                    }
-              ) 
-          }
-          else {
-              /* Has to happen inside handler, to wait for rows */
-              actuallyRenderRegistrar(req, res, next, 
-                  capitalizeString(req.app.locals.formdata.role), req.app.locals.courses);
-          }
-          // res.render(req.app.locals.formdata.role, 
-          //   {role: capitalizeString(req.app.locals.formdata.role),
-          //   courses: req.app.locals.courses,
-          //   query: req.app.locals.query});
+          actuallyRenderRegistrar(req, res, next, 
+              capitalizeString(req.app.locals.formdata.role), req.app.locals.courses);
+          
   });  
 }
 
