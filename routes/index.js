@@ -203,6 +203,7 @@ function actuallyRenderStudent(req, res, next, pagetitle) {
                           role: req.app.locals.formdata.role,
                           courses: req.app.locals.courses,
                           Drop: req.app.locals.formdata.Drop,
+                          enrollIn: req.app.locals.formdata.enrollIn,
                           nextterm: req.app.locals.nextterm});
 }
 
