@@ -122,7 +122,7 @@ function actuallyRenderFaculty(req, res, next, pagetitle) {
 }
 
 function renderStudent(req, res, next, pagetitle){
-  let query = 'select CourseNo, OffTerm, OffYear, FacFirstName, FacLastName, EnrGrade';
+  let query = 'select OfferNo, CourseNo, OffTerm, OffYear, FacFirstName, FacLastName, EnrGrade';
   query += ' from (Enrollment natural join Offering) left join Faculty on Faculty.FacSSN = Offering.FacSSN';
   query += ` where StdSSN = '${req.app.locals.formdata.ident}'`;
   query += ' order by OffYear, OffTerm;';
@@ -150,15 +150,42 @@ function renderStudent(req, res, next, pagetitle){
                 }
                 req.app.locals.nextterm = rows;
 
-                console.log('Form data: ' + JSON.stringify(req.app.locals.formdata));
-                res.render(req.app.locals.formdata.role, 
-                  {role: capitalizeString(req.app.locals.formdata.role),
-                  courses: req.app.locals.courses,
-                  nextterm: req.app.locals.nextterm,
-                  query: req.app.locals.query,
-                  query2: req.app.locals.query2});
+                //- Dropping a course?
+                console.log('dropping course: "' + req.app.locals.formdata.Drop + '"')
+                if (req.app.locals.formdata.Drop) {
+                    dropAndRender(req, res, next, pagetitle);
+                }
+                else {
+                    actuallyRenderStudent(req, res, next, pagetitle + ' list courses');
+                }
+
           })     
   });  
+}
+
+function dropAndRender(req, res, next, pagetitle) {
+    // If updating a grade, do that first, so the student query reflects the new data
+    let drop_query = 'delete from Enrollment where ';
+    drop_query += `StdSSN = '${req.app.locals.formdata.ident}' `;
+    drop_query += `and OfferNo = ${req.app.locals.formdata.Drop};`;
+    console.log('drop_query: ' + drop_query);
+    req.app.locals.drop_query = drop_query;
+
+    req.app.locals.db.run(drop_query, [], (err) => {
+        if (err) {
+            throw err;
+        }
+        actuallyRenderStudent(req, res, next, pagetitle);
+    });
+}
+
+function actuallyRenderStudent(req, res, next, pagetitle) {
+    console.log('Form data: ' + JSON.stringify(req.app.locals.formdata));
+    res.render('student', {title: pagetitle,
+                          role: req.app.locals.formdata.role,
+                          courses: req.app.locals.courses,
+                          Drop: req.app.locals.formdata.Drop,
+                          nextterm: req.app.locals.nextterm});
 }
 
 function renderRegistrar(req, res, next, pagetitle){
