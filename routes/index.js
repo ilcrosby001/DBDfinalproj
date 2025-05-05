@@ -136,7 +136,7 @@ function renderStudent(req, res, next, pagetitle){
           }
           req.app.locals.courses = rows;
 
-          let query2 = 'select CourseNo, FacFirstName, FacLastName, OffLocation, OffTime, OffDays';
+          let query2 = 'select Enrollment.OfferNo, CourseNo, FacFirstName, FacLastName, OffLocation, OffTime, OffDays';
           query2 += ' from (Offering left outer join Faculty on Faculty.FacSSN = Offering.FacSSN) inner join Enrollment on Enrollment.OfferNo = Offering.OfferNo';
           query2 += ` where OffTerm = 'WINTER' and OffYear = 2025`;
           query2 += ` and Enrollment.OfferNo not in (select OfferNo from Enrollment where StdSSN = '${req.app.locals.formdata.ident}')`;
@@ -151,9 +151,12 @@ function renderStudent(req, res, next, pagetitle){
                 req.app.locals.nextterm = rows;
 
                 //- Dropping a course?
-                console.log('dropping course: "' + req.app.locals.formdata.Drop + '"')
+                console.log('enrolling in course: "' + req.app.locals.formdata.Drop + '"')
                 if (req.app.locals.formdata.Drop) {
                     dropAndRender(req, res, next, pagetitle);
+                }
+                else if (req.app.locals.formdata.enrollIn) {
+                    enrollAndRender(req, res, next, pagetitle);
                 }
                 else {
                     actuallyRenderStudent(req, res, next, pagetitle + ' list courses');
@@ -172,6 +175,21 @@ function dropAndRender(req, res, next, pagetitle) {
     req.app.locals.drop_query = drop_query;
 
     req.app.locals.db.run(drop_query, [], (err) => {
+        if (err) {
+            throw err;
+        }
+        actuallyRenderStudent(req, res, next, pagetitle);
+    });
+}
+
+function enrollAndRender(req, res, next, pagetitle) {
+    // If updating a grade, do that first, so the student query reflects the new data
+    let enr_query = 'insert into Enrollment(OfferNo, StdSSN) ';
+    enr_query += `values(${req.app.locals.formdata.enrollIn}, '${req.app.locals.formdata.ident}')`;
+    console.log('enr_query: ' + enr_query);
+    req.app.locals.enr_query = enr_query;
+
+    req.app.locals.db.run(enr_query, [], (err) => {
         if (err) {
             throw err;
         }
