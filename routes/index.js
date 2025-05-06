@@ -122,6 +122,13 @@ function actuallyRenderFaculty(req, res, next, pagetitle) {
 }
 
 function renderStudent(req, res, next, pagetitle){
+    //- Dropping a course?
+    if (req.app.locals.formdata.Drop) {
+        dropAndRender(req, res, next, pagetitle);
+    }
+    else if (req.app.locals.formdata.enrollIn) {
+        enrollAndRender(req, res, next, pagetitle);
+    }
   let query = 'select OfferNo, CourseNo, OffTerm, OffYear, FacFirstName, FacLastName, EnrGrade';
   query += ' from (Enrollment natural join Offering) left join Faculty on Faculty.FacSSN = Offering.FacSSN';
   query += ` where StdSSN = '${req.app.locals.formdata.ident}'`;
@@ -149,16 +156,10 @@ function renderStudent(req, res, next, pagetitle){
                     throw err;
                 }
                 req.app.locals.nextterm = rows;                   
-                //- Dropping a course?
-                if (req.app.locals.formdata.Drop) {
-                    dropAndRender(req, res, next, pagetitle);
-                }
-                else if (req.app.locals.formdata.enrollIn) {
-                    enrollAndRender(req, res, next, pagetitle);
-                }
-                else {
-                    actuallyRenderStudent(req, res, next, pagetitle);
-                }
+                
+                
+                actuallyRenderStudent(req, res, next, pagetitle);
+                
 
           })     
   });  
@@ -176,7 +177,6 @@ function dropAndRender(req, res, next, pagetitle) {
         if (err) {
             throw err;
         }
-        actuallyRenderStudent(req, res, next, pagetitle);
     });
 }
 
@@ -191,7 +191,6 @@ function enrollAndRender(req, res, next, pagetitle) {
         if (err) {
             throw err;
         }
-        actuallyRenderStudent(req, res, next, pagetitle);
     });
 }
 
