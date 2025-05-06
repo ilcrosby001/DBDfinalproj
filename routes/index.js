@@ -150,16 +150,15 @@ function renderStudent(req, res, next, pagetitle){
                 }
                 req.app.locals.nextterm = rows;                   
                 //- Dropping a course?
-                console.log('enrolling in course: "' + req.app.locals.formdata.Drop + '"')
-                    if (req.app.locals.formdata.Drop) {
-                        dropAndRender(req, res, next, pagetitle);
-                    }
-                    else if (req.app.locals.formdata.enrollIn) {
-                        enrollAndRender(req, res, next, pagetitle);
-                    }
-                    else {
-                        actuallyRenderStudent(req, res, next, pagetitle);
-                    }
+                if (req.app.locals.formdata.Drop) {
+                    dropAndRender(req, res, next, pagetitle);
+                }
+                else if (req.app.locals.formdata.enrollIn) {
+                    enrollAndRender(req, res, next, pagetitle);
+                }
+                else {
+                    actuallyRenderStudent(req, res, next, pagetitle);
+                }
 
           })     
   });  
