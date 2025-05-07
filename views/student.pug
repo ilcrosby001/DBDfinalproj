@@ -7,6 +7,7 @@ block content
         input(type='hidden', name='role', value='student')
         input(type='hidden', name='ident', value=`${formdata.ident}`)
         p Your ID: #{formdata.ident}
+        p Please select one course at a time to enroll or drop
         //- p Query: #{query}
         if !courses || courses.length == 0
             p Student #{formdata.ident} enrolled in no courses 
