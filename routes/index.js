@@ -122,12 +122,12 @@ function actuallyRenderFaculty(req, res, next, pagetitle) {
 }
 
 function renderStudent(req, res, next, pagetitle){
-    //- Dropping a course?
+    //- Prioritizes dropping an upcoming course. Cannot drop and enroll at the same time.
     if (req.app.locals.formdata.Drop) {
-        dropAndRender(req, res, next, pagetitle);
+        dropCourse(req, res, next, pagetitle);
     }
     else if (req.app.locals.formdata.enrollIn) {
-        enrollAndRender(req, res, next, pagetitle);
+        enrollInCourse(req, res, next, pagetitle);
     }
   let query = 'select OfferNo, CourseNo, OffTerm, OffYear, FacFirstName, FacLastName, EnrGrade';
   query += ' from (Enrollment natural join Offering) left join Faculty on Faculty.FacSSN = Offering.FacSSN';
@@ -165,8 +165,7 @@ function renderStudent(req, res, next, pagetitle){
   });  
 }
 
-function dropAndRender(req, res, next, pagetitle) {
-    // If updating a grade, do that first, so the student query reflects the new data
+function dropCourse(req, res, next, pagetitle) {
     let drop_query = 'delete from Enrollment where ';
     drop_query += `StdSSN = '${req.app.locals.formdata.ident}' `;
     drop_query += `and OfferNo = ${req.app.locals.formdata.Drop};`;
@@ -180,8 +179,7 @@ function dropAndRender(req, res, next, pagetitle) {
     });
 }
 
-function enrollAndRender(req, res, next, pagetitle) {
-    // If updating a grade, do that first, so the student query reflects the new data
+function enrollInCourse(req, res, next, pagetitle) {
     let enr_query = 'insert into Enrollment(OfferNo, StdSSN) ';
     enr_query += `values(${req.app.locals.formdata.enrollIn}, '${req.app.locals.formdata.ident}')`;
     console.log('enr_query: ' + enr_query);
@@ -205,6 +203,9 @@ function actuallyRenderStudent(req, res, next, pagetitle) {
 }
 
 function renderRegistrar(req, res, next, pagetitle){
+    if (req.app.locals.formdata.cancelOffer) {
+        cancelCourse(req, res, next, pagetitle);
+    }
   let query = 'select OfferNo, CourseNo, Faculty.FacSSN, FacLastName, OffLocation, OffTime, OffDays';
   query += ' from Offering left join Faculty on Faculty.FacSSN = Offering.FacSSN';
   query += ` where OffTerm = 'WINTER' and OffYear = 2025`;
@@ -223,6 +224,34 @@ function renderRegistrar(req, res, next, pagetitle){
               capitalizeString(req.app.locals.formdata.role), req.app.locals.courses);
           
   });  
+}
+
+function cancelCourse(req, res, next, pagetitle) {
+    //- remove the course from Enrollment first to avoid weirdness
+    let cancel_query1 = 'delete from Enrollment where ';
+    cancel_query1 += `OfferNo = ${req.app.locals.formdata.cancelOffer};`;
+    console.log('cancel_query1: ' + cancel_query1);
+    req.app.locals.cancel_query1 = cancel_query1;
+
+    req.app.locals.db.run(cancel_query1, [], (err) => {
+        if (err) {
+            throw err;
+        }
+    });
+    actuallyCancel(req, res, next, pagetitle)
+}
+
+function actuallyCancel(req, res, next, pagetitle) {
+    let cancel_query2 = 'delete from Offering where ';
+    cancel_query2 += `OfferNo = ${req.app.locals.formdata.cancelOffer};`;
+    console.log('cancel_query2: ' + cancel_query2);
+    req.app.locals.cancel_query2 = cancel_query2;
+
+    req.app.locals.db.run(cancel_query2, [], (err) => {
+        if (err) {
+            throw err;
+        }
+    });
 }
 
 function actuallyRenderRegistrar(req, res, next, role, courses, cancelOffer=undefined, offers=undefined) {
