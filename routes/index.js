@@ -22,7 +22,7 @@ function capitalizeString(s) {
 }
 
 function renderIndex(req, res, next) {
-    let pagetitle = 'Final Project';
+    let pagetitle = 'CSC 305 Final Project';
     console.log('role: "' + req.app.locals.formdata.role + '"');
     if (!req.app.locals.formdata.role) {
         res.render('index', {title: pagetitle});

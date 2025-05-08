@@ -9,8 +9,9 @@ block content
         p Your ID: #{formdata.ident}
 
         if !courses || courses.length == 0
-            p There are no offerings for the next term
+            p There are no offerings for the next term.
         else if courses.length > 0
+            p The following courses are offered next term:
             table
                 thead
                     tr
