@@ -16,15 +16,12 @@ block content
                     tr
                         each key in Object.keys(courses[0])
                             th= key
-                        th Edit Offering
                         th Cancel Offering
                 tbody 
                     each course in courses
                         tr 
                             each val in Object.values(course)
                                 td= val
-                            td
-                                input(type='radio', name='editOffer', value=`${course['OfferNo']}`)
                             td
                                 input(type='radio', name='cancelOffer', value=`${course['OfferNo']}`)
 
